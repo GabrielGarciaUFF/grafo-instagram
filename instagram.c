@@ -63,23 +63,95 @@ void imprime(TGrafo *vertice) {
 }
 
 int numero_seguidos(TGrafo *g, char *nome) {
-    //TODO: Implementar essa função
-    return 0;
+    TGrafo *p = busca_vertice(g, nome);
+    if (p == NULL) {
+        return 0;
+    }
+    int cont = 0;
+    TVizinho *v = p->prim_vizinho;
+    while (v != NULL) {
+        cont++;
+        v = v->prox;
+    }
+    return cont;
 }
 
 int seguidores(TGrafo *g, char *nome, int imprime) {
-    //TODO: Implementar essa função
-    return 0;
+    int cont = 0;
+    TGrafo *p = g;
+
+    while (p != NULL) {
+        if (busca_vizinho(p->prim_vizinho, nome) != NULL) {
+            cont++;
+            if (imprime) {
+                printf("%s ", p->nome);
+            }
+        }
+        p = p->prox;
+    }
+
+    if (imprime) {
+        printf("\n");
+    }
+
+    return cont;
 }
 
 TGrafo *mais_popular(TGrafo *g) {
-    //TODO: Implementar essa função
-    return NULL;
+    if (g == NULL) {
+        return NULL;
+    }
+
+    TGrafo *popular = NULL;
+    int max_seguidores = -1;
+    TGrafo *p = g;
+
+    while (p != NULL) {
+        int qtd = seguidores(g, p->nome, 0);
+        if (qtd > max_seguidores) {
+            max_seguidores = qtd;
+            popular = p;
+        }
+        p = p->prox;
+    }
+
+    return popular;
 }
 
 int segue_mais_velho(TGrafo *g, int imprime) {
-    //TODO: Implementar essa função
-    return 0;
+    int cont = 0;
+    TGrafo *p = g;
+
+    while (p != NULL) {
+        // Precisa seguir pelo menos alguém
+        if (p->prim_vizinho != NULL) {
+            int so_mais_velho = 1;
+            TVizinho *v = p->prim_vizinho;
+
+            while (v != NULL) {
+                TGrafo *vertice_viz = busca_vertice(g, v->nome);
+                if (vertice_viz != NULL && vertice_viz->idade <= p->idade) {
+                    so_mais_velho = 0;
+                    break;
+                }
+                v = v->prox;
+            }
+
+            if (so_mais_velho) {
+                cont++;
+                if (imprime) {
+                    printf("%s ", p->nome);
+                }
+            }
+        }
+        p = p->prox;
+    }
+
+    if (imprime) {
+        printf("\n\n");
+    }
+
+    return cont;
 }
 
 void libera_vizinho(TVizinho *vizinho) {
